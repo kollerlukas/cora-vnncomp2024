@@ -1,0 +1,224 @@
+
+# Settings -----------------------------------------------
+
+# define variables
+variables:
+  DO_CI: "true"
+  # append commit message with '--ci-run-ext'
+  # append commit message with '--ci-run-merge'
+  # append commit message with '--ci-run-release'
+  # append commit message with '--ci-run-examples'
+  # append commit message with '--ci-run-benchmarks'
+
+# define base settings
+.base-image:
+  image:
+    name: tobiasladnertum/cora:r2023b
+    entrypoint: [""]
+  tags:
+    - matlab
+  # default timeout
+  timeout: 1h
+  rules:
+    - if: $DO_CI == "true"
+      when: always
+    - when: manual
+
+# define stages
+stages:
+  - init
+  - test-short
+  - test-extended
+  - test-compatibility
+  - test-examples
+  - test-benchmarks
+  - ci-status
+
+# Init stage ----------------------------------------------
+
+# define init settings
+.init:
+  stage: init
+  extends: .base-image
+  before_script: 
+    # any non-zero exit code should fail the job
+    - set +e
+
+# test job
+test-job:
+  extends: .init
+  rules:
+    - when: never
+  script: 
+    - matlab -batch "addpath(genpath('.')); testLong_zonotope_reduce"
+
+# Short test stage --------------------------------------------------------
+
+# define base run
+.base-run:
+  extends: .init
+  variables:
+    testSuite: 'short'
+  script: 
+    # reset CORA
+    - matlab -batch "addpath(genpath('.')); resetCORA();"
+
+    # run testSuite
+    - matlab -batch "addpath(genpath('.')); runTestSuite('$testSuite');"
+
+    # check test results
+    - matlab -batch "addpath(genpath('.')); writeTestResultsForCI('$testSuite');"
+    - rm resultText.txt # no longer needed
+
+    # reset CORA
+    - matlab -batch "addpath(genpath('.')); resetCORA();"
+    - if [ -d "./DLT_CustomLayers" ]; then rm -Rf ./DLT_CustomLayers; fi
+    
+    # exit with exit code
+    - EXIT_CODE=$(<failed.txt)
+    - rm failed.txt
+    - echo "Exiting with code $EXIT_CODE."
+    - exit $EXIT_CODE
+  after_script: # all done in script
+
+# run short tests
+test-short:
+  stage: test-short
+  extends: .base-run
+  variables:
+    testSuite: 'short'
+
+# Extended test stage -----------------------------------------------------
+
+# extends base run settings
+.base-run-ext:
+  stage: test-extended
+  extends: .base-run
+  rules: 
+    # run extended tests if commit message contains '--ci-run-ext' or always on specific branches
+    - if: $DO_CI == "true" && 
+            ($CI_COMMIT_MESSAGE =~ /^(.|\r|\n)*--ci-run-ext(.|\r|\n)*/
+                || $CI_COMMIT_MESSAGE =~ /^(.|\r|\n)*--ci-run-merge(.|\r|\n)*/
+                || $CI_COMMIT_MESSAGE =~ /^(.|\r|\n)*--ci-run-release(.|\r|\n)*/
+                || $CI_COMMIT_BRANCH == "PUBLIC" 
+                || $CI_COMMIT_BRANCH == "public-bugfix" 
+                || $CI_COMMIT_BRANCH == "devgeneral" 
+            )
+      when: always
+
+# run long duration tests
+test-long:
+  extends: .base-run-ext
+  timeout: 2h
+  variables:
+    testSuite: 'long'
+
+# run nn tests
+test-nn:
+  extends: .base-run-ext
+  variables:
+    testSuite: 'nn'
+  rules: 
+    - !reference [.base-run-ext, rules]
+    # always run on 'nn-*' branches
+    - if: $DO_CI == "true" && $CI_COMMIT_BRANCH =~ "/^nn-.*/"
+      when: always
+
+# run flaky tests
+test-flaky:
+  extends: .base-run-ext
+  variables:
+    testSuite: 'flaky'
+
+# Compatibility with other versions ---------------------------------------
+
+.base-run-compatibility:
+  extends: .base-run-ext
+  stage: test-compatibility
+  image:
+    name: tobiasladnertum/cora:$matlabVerison
+  variables:
+    testSuite: 'short'
+
+# run 2022b
+test-compatibility-2022b:
+  extends: .base-run-compatibility
+  variables:
+    matlabVerison: 'r2022b'
+
+# run 2023b
+test-compatibility-2023b:
+  extends: .base-run-compatibility
+  variables:
+    matlabVerison: 'r2023b'
+
+# run 2024a
+test-compatibility-2024a:
+  extends: .base-run-compatibility
+  variables:
+    matlabVerison: 'r2024a'
+
+# Examples test stage ---------------------------------------------------------
+
+# extends base run settings
+.base-run-examples:
+  stage: test-examples
+  extends: .base-run
+  timeout: 24h
+  rules: 
+    # run all tests if commit message contains '--ci-run-examples'
+    - if: $DO_CI == "true" && 
+            ($CI_COMMIT_MESSAGE =~ /^(.|\r|\n)*--ci-run-examples(.|\r|\n)*/
+                || $CI_COMMIT_MESSAGE =~ /^(.|\r|\n)*--ci-run-merge(.|\r|\n)*/
+                || $CI_COMMIT_MESSAGE =~ /^(.|\r|\n)*--ci-run-release(.|\r|\n)*/
+            )
+      when: always
+
+# run examples tests
+test-examples:
+  extends: .base-run-examples
+  variables:
+    testSuite: 'examples'
+
+# Benchmark test stage ----------------------------------------------------
+
+# extends base run settings
+.base-run-benchmarks:
+  stage: test-benchmarks
+  extends: .base-run
+  timeout: 24h
+  rules: 
+    # run all tests if commit message contains '--ci-run-benchmarks'
+    - if: $DO_CI == "true" && 
+            ($CI_COMMIT_MESSAGE =~ /^(.|\r|\n)*--ci-run-benchmarks(.|\r|\n)*/
+                || $CI_COMMIT_MESSAGE =~ /^(.|\r|\n)*--ci-run-release(.|\r|\n)*/
+            )
+      when: always
+
+# run benchmarks tests
+test-benchmarks:
+  extends: .base-run-benchmarks
+  variables:
+    testSuite: 'benchmarks'
+
+# CI status block ---------------------------------------------------------
+
+# legacy stages for bitbucket 
+
+ci-failure:
+  stage: ci-status
+  extends: .base-image
+  script:
+    - exit 1 # always fail
+  rules:
+    - if: $DO_CI == "true"
+      when: on_failure # of any earlier job
+
+ci-success:
+  stage: ci-status
+  extends: .base-image
+  script:
+    - exit 0
+  rules:
+    - if: $DO_CI == "true"
+      when: on_success # of all jobs
