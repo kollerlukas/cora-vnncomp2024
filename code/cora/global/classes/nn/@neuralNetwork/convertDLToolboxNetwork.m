@@ -258,28 +258,51 @@ function [layers,inputSize,currentSize] = aux_convertLayer(layers,dlt_layer,curr
         idx_out = double(extractdata(idx_out));
         layers{end+1} = nnReshapeLayer(idx_out, dlt_layer.Name);
 
-    elseif isa(dlt_layer, 'test_sat.Add_To_Sub1018')
+    elseif strcmp(dlt_layer.Name, 'MatMul_To_ReluLayer1003')
+        % for VNN Comp (test_nano.onnx)
+        params = dlt_layer.ONNXParams;
+        layers{end+1} = nnLinearLayer(params.Learnables.Ma_MatMulcst,0, ...
+            dlt_layer.Name);
+        layers{end+1} = nnReLULayer(dlt_layer.Name);
+    elseif strcmp(dlt_layer.Name, 'MatMul_To_AddLayer1003')
         % for VNN Comp
-        W1 = dlt_layer.Operation_1_MatMul_W;
-        layers{end+1} = nnLinearLayer(W1, zeros(size(W1, 1)));
-
-        W2 = dlt_layer.Operation_2_MatMul_W;
-        layers{end+1} = nnLinearLayer(W2, zeros(size(W2, 1)));
-
-        W3 = dlt_layer.Operation_3_MatMul_W;
-        layers{end+1} = nnLinearLayer(W3, zeros(size(W3, 1)));
-
-        W4 = dlt_layer.Operation_4_MatMul_W;
-        layers{end+1} = nnLinearLayer(W4, zeros(size(W4, 1)));
-
-        W5 = dlt_layer.Operation_5_MatMul_W;
-        layers{end+1} = nnLinearLayer(W5, zeros(size(W5, 1)));
-
-        W6 = dlt_layer.Operation_6_MatMul_W;
-        layers{end+1} = nnLinearLayer(W6, zeros(size(W, 6)));
-
-        W7 = dlt_layer.linear_7_MatMul_W;
-        layers{end+1} = nnLinearLayer(W7, zeros(size(W, 7)));
+        params = dlt_layer.ONNXParams;
+        if ~isfield(params.Learnables,'W2')
+            % (test_tiny.onnx)
+            layers{end+1} = nnLinearLayer(params.Learnables.W0,0,dlt_layer.Name);
+            layers{end+1} = nnReLULayer(dlt_layer.Name);
+            layers{end+1} = nnLinearLayer(params.Learnables.W1,0,dlt_layer.Name);
+        else
+            % (test_small.onnx)
+            layers{end+1} = nnLinearLayer(params.Learnables.W0',[1.5; 1.5],dlt_layer.Name);
+            layers{end+1} = nnReLULayer(dlt_layer.Name);
+            layers{end+1} = nnLinearLayer(params.Learnables.W1,[2.5; 2.5],dlt_layer.Name);
+            layers{end+1} = nnReLULayer(dlt_layer.Name);
+            layers{end+1} = nnLinearLayer(params.Learnables.W2',3.5,dlt_layer.Name);
+        end
+    elseif strcmp(dlt_layer.Name, 'Sub_To_AddLayer1018')
+        % for VNN Comp (test_sat.onnx)
+        params = dlt_layer.ONNXParams;
+        layers{end+1} = nnLinearLayer(params.Learnables.Operation_1_MatMul_W, ...
+            params.Nonlearnables.Operation_1_Add_B,dlt_layer.Name);
+        layers{end+1} = nnReLULayer(dlt_layer.Name);
+        layers{end+1} = nnLinearLayer(params.Learnables.Operation_2_MatMul_W, ...
+            params.Nonlearnables.Operation_2_Add_B,dlt_layer.Name);
+        layers{end+1} = nnReLULayer(dlt_layer.Name);
+        layers{end+1} = nnLinearLayer(params.Learnables.Operation_3_MatMul_W, ...
+            params.Nonlearnables.Operation_3_Add_B,dlt_layer.Name);
+        layers{end+1} = nnReLULayer(dlt_layer.Name);
+        layers{end+1} = nnLinearLayer(params.Learnables.Operation_4_MatMul_W, ...
+            params.Nonlearnables.Operation_4_Add_B,dlt_layer.Name);
+        layers{end+1} = nnReLULayer(dlt_layer.Name);
+        layers{end+1} = nnLinearLayer(params.Learnables.Operation_5_MatMul_W, ...
+            params.Nonlearnables.Operation_5_Add_B,dlt_layer.Name);
+        layers{end+1} = nnReLULayer(dlt_layer.Name);
+        layers{end+1} = nnLinearLayer(params.Learnables.Operation_6_MatMul_W, ...
+            params.Nonlearnables.Operation_6_Add_B,dlt_layer.Name);
+        layers{end+1} = nnReLULayer(dlt_layer.Name);
+        layers{end+1} = nnLinearLayer(params.Learnables.linear_7_MatMul_W, ...
+            params.Nonlearnables.linear_7_Add_B,dlt_layer.Name);
     else
         % show warning
         if verbose

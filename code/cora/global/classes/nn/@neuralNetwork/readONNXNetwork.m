@@ -12,6 +12,9 @@ function obj = readONNXNetwork(file_path, varargin)
 %    verbose - bool if information should be displayed
 %    inputDataFormats - dimensions of input e.g. 'BC' or 'BSSC'
 %    outputDataFormats - see inputDataFormats
+%    targetNetwork - ...
+%    containsCompositeLayers - there are residual connections in the
+%    network
 %
 % Outputs:
 %    obj - generated object
@@ -34,11 +37,12 @@ function obj = readONNXNetwork(file_path, varargin)
 % validate parameters
 if nargin < 1
     throw(CORAerror("CORA:notEnoughInputArgs", 1))
-elseif nargin > 5
-    throw(CORAerror("CORA:tooManyInputArgs", 5))
+elseif nargin > 6
+    throw(CORAerror("CORA:tooManyInputArgs", 6))
 end
-[verbose, inputDataFormats, outputDataFormats, targetNetwork] = ...
-    setDefaultValues({false, 'BC', 'BC', 'dagnetwork'}, varargin);
+[verbose, inputDataFormats, outputDataFormats, targetNetwork, ...
+    containsCompositeLayers] = setDefaultValues({false, 'BC', 'BC', ...
+        'dagnetwork', false}, varargin);
 
 % valid in-/outputDataFormats for importONNXNetwork
 validDataFormats = {'','BC','BCSS','BSSC','CSS','SSC','BCSSS','BSSSC', ...
@@ -76,9 +80,13 @@ catch ME
     end
 end
 
-% Combine multiple layers into blocks to realize residual connections and
-% parallel computing paths.
-layers = aux_groupCompositeLayers(dltoolbox_net.Layers,dltoolbox_net.Connections);
+if containsCompositeLayers
+    % Combine multiple layers into blocks to realize residual connections and
+    % parallel computing paths.
+    layers = aux_groupCompositeLayers(dltoolbox_net.Layers,dltoolbox_net.Connections);
+else
+    layers = num2cell(dltoolbox_net.Layers);
+end
 
 % convert DLT network to CORA network
 % obj = neuralNetwork.convertDLToolboxNetwork(dltoolbox_net.Layers, verbose);
@@ -104,6 +112,15 @@ function dltoolbox_net = aux_readONNXviaDLT(file_path,inputDataFormats,outputDat
             'OutputDataFormats', outputDataFormats, ...
             'PackageName', customLayerName, ...
             'TargetNetwork', targetNetwork);
+    elseif strlength(inputDataFormats) == 0
+        if strlength(outputDataFormats) == 0
+            dltoolbox_net = importNetworkFromONNX(file_path, ...
+                'PackageName', customLayerName);
+        else
+            dltoolbox_net = importNetworkFromONNX(file_path, ...
+                'OutputDataFormats', outputDataFormats, ...
+                'PackageName', customLayerName);
+        end
     else
         % MATLAB >=R2023b
         dltoolbox_net = importNetworkFromONNX(file_path, ...
@@ -148,6 +165,7 @@ function layers = aux_groupCompositeLayers(layerslist, connections)
     layers = {layer0};
     for i=1:height(connections)
         % Find source and destination layer.
+        % layerSrc = aux_findLayerByName(layerslist,connections(i,:).Source{1});
         layerDest = aux_findLayerByName(layerslist,connections(i,:).Destination{1});
         % Check if the next layer aggreates multiple paths.
         isAggrLayer = ~strcmp(layerDest.Name,connections(i,:).Destination{1});

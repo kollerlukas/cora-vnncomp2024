@@ -105,7 +105,8 @@ function [nn,options,permuteInputDims] = aux_readNetworkAndOptions( ...
     options.nn.interval_center = false;
 
     if strcmp(benchName,'2024_test')
-        nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'','');
+        nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'','', ...
+            'dlnetwork',false);
         % Set the batch size.
         options.nn.train.mini_batch_size = 512;
         permuteInputDims = false;

@@ -32,6 +32,9 @@ for i=1:size(instances,1)
     instanceFilename = [resultsPath modelName{1} '_' ...
         vnnlibName{1} '.counterexample'];
 
+    % modelPath = ['onnx/' modelPath];
+    % vnnlibPath = ['generated_vnnlib/' vnnlibPath];
+
     tic
 
     % Run the current instance.
