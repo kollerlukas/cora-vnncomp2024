@@ -1,4 +1,4 @@
-name: cora
+name: CORA
 ami: ami-080fce32dc8c15ced
 scripts_dir: .
 manual_installation_step: True
