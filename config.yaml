@@ -3,7 +3,7 @@ ami: ami-080fce32dc8c15ced
 scripts_dir: .
 manual_installation_step: True
 run_installation_script_as_root: False
-run_post_installation_script_as_root: False
+run_post_installation_script_as_root: True
 run_toolkit_as_root: False
 description: >
   The Continuous Reachability Analyzer (CORA) is a collection of MATLAB classes for the formal verification of cyber-physical systems using reachability analysis. CORA integrates various vector and matrix set representations and operations on them as well as reachability algorithms of various dynamic system classes. The software is designed such that set representations can be exchanged without having to modify the code for reachability analysis. CORA is designed using the object oriented paradigm, such that users can safely use methods without concerning themselves with detailed information hidden inside the object. Since the toolbox is written in MATLAB, the installation and use is platform independent. 
