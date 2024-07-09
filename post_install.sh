@@ -53,24 +53,25 @@ wget -q https://www.mathworks.com/mpm/glnxa64/mpm \
 # download license file
 curl --retry 100 --retry-connrefused  -L ${LICENSE_URL} -o license.lic
 
-ls -al
-
 # copy to license folder and delete other license info
 cp -f license.lic "${EXISTING_MATLAB_LOCATION}/licenses"
-# cp -f license.lic "/root/.matlab/R${MATLAB_RELEASE}_licenses"
-# rm "${EXISTING_MATLAB_LOCATION}/licenses/license_info.xml"
+
+# test matlab
+matlab -nodisplay -r "cd ${CURR_DIR}; disp('Matlab licensing worked.')"
 
 # run installCORA non-interactively; requires write access to startup
-matlab -nodisplay -r "cd ${CURR_DIR}; which startup"
+# matlab -nodisplay -r "cd ${CURR_DIR}; which startup"
 # sudo chmod 777 /home/matlab/Documents/MATLAB/startup.m
-matlab -nodisplay -r "cd ${CURR_DIR}; installCORA(false,true,'/home/matlab'); savepath"
+# matlab -nodisplay -r "cd ${CURR_DIR}; addpath(genpath('.')); installCORA(false,true,'${CURR_DIR}'); savepath"
+
+ls -a
 
 # reading ONNX networks within docker can cause exceptions
 # due to some gui issue (see neuralNetwork/readONNXNetwork)
 # fixing it on-the-fly requires writing permission
-matlab -nodisplay -r "cd ${CURR_DIR}; which +nnet/+internal/+cnn/+onnx/+fcn/ModelTranslation.m"
-sudo chmod 777 /home/matlab/Documents/MATLAB/SupportPackages/R$MATLAB_RELEASE/toolbox/nnet/supportpackages/onnx/+nnet/+internal/+cnn/+onnx/+fcn/ModelTranslation.m \
-   && sudo chmod 777 /home/matlab/Documents/MATLAB/SupportPackages/R$MATLAB_RELEASE/toolbox/nnet/supportpackages/onnx/+nnet/+internal/+cnn/+onnx/CustomLayerManager.m
+# matlab -nodisplay -r "cd ${CURR_DIR}; which +nnet/+internal/+cnn/+onnx/+fcn/ModelTranslation.m"
+# sudo chmod 777 /home/matlab/Documents/MATLAB/SupportPackages/R$MATLAB_RELEASE/toolbox/nnet/supportpackages/onnx/+nnet/+internal/+cnn/+onnx/+fcn/ModelTranslation.m \
+# && sudo chmod 777 /home/matlab/Documents/MATLAB/SupportPackages/R$MATLAB_RELEASE/toolbox/nnet/supportpackages/onnx/+nnet/+internal/+cnn/+onnx/CustomLayerManager.m
 
 # install CORA
 # matlab -nodisplay -r "cd /home/ubuntu/toolkit/code; addpath(genpath('.')); installCORA(false,true,'/home/ubuntu/toolkit/code');"
