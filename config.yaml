@@ -1,7 +1,7 @@
 name: CORA
 ami: ami-080fce32dc8c15ced
 scripts_dir: .
-manual_installation_step: False
+manual_installation_step: True
 run_installation_script_as_root: False
 run_post_installation_script_as_root: False
 run_toolkit_as_root: False
