@@ -68,9 +68,9 @@ matlab -nodisplay -r "cd ${CURR_DIR}; addpath(genpath('.')); installCORA(false,t
 # due to some gui issue (see neuralNetwork/readONNXNetwork)
 # fixing it on-the-fly requires writing permission
 # matlab -nodisplay -r "cd ${CURR_DIR}; which +nnet/+internal/+cnn/+onnx/+fcn/ModelTranslation.m"
-ONNX_SUPPORT_PATH='/root/Documents/MATLAB/SupportPackages/R$MATLAB_RELEASE/toolbox/nnet/supportpackages/onnx'
+ONNX_SUPPORT_PATH='/root/Documents/MATLAB/SupportPackages/R${MATLAB_RELEASE}/toolbox/nnet/supportpackages/onnx'
 # sudo chmod 777 '${ONNX_SUPPORT_PATH}/+nnet/+internal/+cnn/+onnx/+fcn/ModelTranslation.m' \
-#   && sudo chmod 777 '${ONNX_SUPPORT_PATH}/+nnet/+internal/+cnn/+onnx/CustomLayerManager.m'
+#  && sudo chmod 777 '${ONNX_SUPPORT_PATH}/+nnet/+internal/+cnn/+onnx/CustomLayerManager.m'
 # give access to entire support package directory to all users
 sudo chmod -R 777 '${ONNX_SUPPORT_PATH}'
 
