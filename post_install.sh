@@ -45,7 +45,7 @@ export DEBIAN_FRONTEND=noninteractive \
 
 wget -q https://www.mathworks.com/mpm/glnxa64/mpm \
     && chmod +x mpm \
-    && sudo HOME=${HOME} ./mpm install \
+    && ./mpm install \
         --destination=${EXISTING_MATLAB_LOCATION} \
         --release=r${MATLAB_RELEASE} \
         --products ${ADDITIONAL_PRODUCTS}	
@@ -58,21 +58,9 @@ curl --retry 100 --retry-connrefused  -L ${LICENSE_URL} -o license.lic
 
 # copy to license folder and delete other license info
 cp -f license.lic "${EXISTING_MATLAB_LOCATION}/licenses"
-# cp -f license.lic "/root/.matlab/R${MATLAB_RELEASE}_licenses"
-# rm "${EXISTING_MATLAB_LOCATION}/licenses/license_info.xml"
 
 # run installCORA non-interactively
 matlab -nodisplay -r "cd ${CURR_DIR}; addpath(genpath('.')); installCORA(false,true,'${CURR_DIR}/code'); savepath"
-
-# reading ONNX networks within docker can cause exceptions
-# due to some gui issue (see neuralNetwork/readONNXNetwork)
-# fixing it on-the-fly requires writing permission
-# matlab -nodisplay -r "cd ${CURR_DIR}; which +nnet/+internal/+cnn/+onnx/+fcn/ModelTranslation.m"
-ONNX_SUPPORT_PATH='/root/Documents/MATLAB/SupportPackages/R${MATLAB_RELEASE}/toolbox/nnet/supportpackages/onnx'
-# sudo chmod 777 '${ONNX_SUPPORT_PATH}/+nnet/+internal/+cnn/+onnx/+fcn/ModelTranslation.m' \
-#  && sudo chmod 777 '${ONNX_SUPPORT_PATH}/+nnet/+internal/+cnn/+onnx/CustomLayerManager.m'
-# give access to entire support package directory to all users
-sudo chmod -R 777 '${ONNX_SUPPORT_PATH}'
 
 # -------------------------------------------------------------------------
 # DONE
