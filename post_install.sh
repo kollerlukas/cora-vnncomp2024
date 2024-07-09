@@ -10,7 +10,8 @@ LICENSE_URL='https://drive.google.com/uc?export=download&id=<file-id>'
 
 MATLAB_RELEASE=2024a
 EXISTING_MATLAB_LOCATION=$(dirname $(dirname $(readlink -f $(which matlab))))
-ADDITIONAL_PRODUCTS="Symbolic_Math_Toolbox Optimization_Toolbox Statistics_and_Machine_Learning_Toolbox Deep_Learning_Toolbox Deep_Learning_Toolbox_Converter_for_ONNX_Model_Format Parallel_Computing_Toolbox"
+# ADDITIONAL_PRODUCTS="Symbolic_Math_Toolbox Optimization_Toolbox Statistics_and_Machine_Learning_Toolbox Deep_Learning_Toolbox Deep_Learning_Toolbox_Converter_for_ONNX_Model_Format Parallel_Computing_Toolbox"
+ADDITIONAL_PRODUCTS="Deep_Learning_Toolbox_Converter_for_ONNX_Model_Format"
 
 CURR_DIR=$(pwd)
 
@@ -65,12 +66,12 @@ matlab -nodisplay -r "cd ${CURR_DIR}; which startup"
 # sudo chmod 777 /home/matlab/Documents/MATLAB/startup.m
 matlab -nodisplay -r "cd ${CURR_DIR}; installCORA(false,true,'/home/matlab'); savepath"
 
-# reading ONNX networks within docker can cause exceptions
-# due to some gui issue (see neuralNetwork/readONNXNetwork)
-# fixing it on-the-fly requires writing permission
-matlab -nodisplay -r "cd ${CURR_DIR}; which +nnet/+internal/+cnn/+onnx/+fcn/ModelTranslation.m"
-sudo chmod 777 /home/matlab/Documents/MATLAB/SupportPackages/R$MATLAB_RELEASE/toolbox/nnet/supportpackages/onnx/+nnet/+internal/+cnn/+onnx/+fcn/ModelTranslation.m \
-   && sudo chmod 777 /home/matlab/Documents/MATLAB/SupportPackages/R$MATLAB_RELEASE/toolbox/nnet/supportpackages/onnx/+nnet/+internal/+cnn/+onnx/CustomLayerManager.m
+# # reading ONNX networks within docker can cause exceptions
+# # due to some gui issue (see neuralNetwork/readONNXNetwork)
+# # fixing it on-the-fly requires writing permission
+# matlab -nodisplay -r "cd ${CURR_DIR}; which +nnet/+internal/+cnn/+onnx/+fcn/ModelTranslation.m"
+# sudo chmod 777 /home/matlab/Documents/MATLAB/SupportPackages/R$MATLAB_RELEASE/toolbox/nnet/supportpackages/onnx/+nnet/+internal/+cnn/+onnx/+fcn/ModelTranslation.m \
+#    && sudo chmod 777 /home/matlab/Documents/MATLAB/SupportPackages/R$MATLAB_RELEASE/toolbox/nnet/supportpackages/onnx/+nnet/+internal/+cnn/+onnx/CustomLayerManager.m
 
 # install CORA
 # matlab -nodisplay -r "cd /home/ubuntu/toolkit/code; addpath(genpath('.')); installCORA(false,true,'/home/ubuntu/toolkit/code');"
