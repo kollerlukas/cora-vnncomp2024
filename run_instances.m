@@ -1,5 +1,5 @@
 % Specify benchmark name.
-benchName = '2024_test';
+benchName = 'acasxu_2023';
 % Obtain all instances.
 filename = 'instances.csv';
 instances = readtable(filename,'Delimiter',',');
@@ -34,6 +34,9 @@ for i=1:size(instances,1)
 
     % modelPath = ['onnx/' modelPath];
     % vnnlibPath = ['generated_vnnlib/' vnnlibPath];
+
+    % Prepare the current instance.
+    prepare_instance(benchName,modelPath,vnnlibPath);
 
     tic
 
