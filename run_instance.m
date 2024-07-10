@@ -85,6 +85,8 @@ function res = run_instance(benchName,modelPath,vnnlibPath,resultsPath, ...
         fprintf('%s -- %s: %s\n',modelPath,vnnlibPath,res);
         time = toc;
         fprintf('--- Verification time: %.4f / %.4f [s]\n',time,timeout);
+
+        disp(fileread(resultsPath))
     end
 
 end
