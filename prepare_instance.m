@@ -83,7 +83,7 @@ function [nn,options,permuteInputDims] = aux_readNetworkAndOptions( ...
       % Bring input into the correct shape.
       permuteInputDims = true;
       % Set the batch size and use interval-center.
-      options.nn.train.mini_batch_size = 8;
+      options.nn.train.mini_batch_size = 32;
       options.nn.interval_center = true;
       % --- Comment: point-eval possible; memory issues with zonotope eval.
   elseif strcmp(benchName,'collins_aerospace_benchmark')
@@ -153,12 +153,20 @@ function [nn,options,permuteInputDims] = aux_readNetworkAndOptions( ...
       throw(CORAerror('CORA:notSupported',...
           sprintf("Benchmark '%s' not supported!",benchName)));
   elseif strcmp(benchName,'tinyimagenet')
-      throw(CORAerror('CORA:notSupported',...
-          sprintf("Benchmark '%s' not supported!",benchName)));
+      % vnncomp2024_cifar100_benchmark ----------------------------------
+      nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'BCSS');
+      % Bring input into the correct shape.
+      permuteInputDims = true;
+      % Set the batch size and use interval-center.
+      options.nn.train.mini_batch_size = 32;
+      options.nn.interval_center = true;
+      % --- Comment: point-eval possible; memory issues with zonotope eval.
   elseif strcmp(benchName,'tllverifybench_2023')
       % tllverifybench --------------------------------------------------
       nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'BC');
-      % --- Comment: out of memory error; adaptively set batch size?
+      % Set the batch size and use interval-center.
+      options.nn.train.mini_batch_size = 32;
+      options.nn.interval_center = true;
   elseif strcmp(benchName,'traffic_signs_recognition_2023')
       throw(CORAerror('CORA:notSupported',...
           sprintf("Benchmark '%s' not supported!",benchName)));
