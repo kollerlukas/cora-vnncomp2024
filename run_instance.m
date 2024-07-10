@@ -63,7 +63,11 @@ function res = run_instance(benchName,modelPath,vnnlibPath,resultsPath, ...
                 fclose(fid);
             elseif strcmp(res,'COUNTER EXAMPLE')
                 res = 'sat';
-                % TODO: reorder input dimensions...
+                % Reorder input dimensions...
+                if permuteInputDims
+                  inSize = nn.layers{1}.inputSize([2 1 3]);
+                  x_ = reshape(permute(reshape(x_,inSize),[2 1 3]),[],1);
+                end
                 % Write content.
                 fprintf(fid,'sat\n(');
                 % Write input values.
