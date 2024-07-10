@@ -46,6 +46,7 @@ function res = run_instance(benchName,modelPath,vnnlibPath,resultsPath, ...
                 res = 'unsat';
                 % Write content.
                 fprintf(fid,'unsat\n');
+                fclose(fid)
             elseif strcmp(res,'COUNTER EXAMPLE')
                 res = 'sat';
                 % TODO: reorder input dimensions...
@@ -60,6 +61,7 @@ function res = run_instance(benchName,modelPath,vnnlibPath,resultsPath, ...
                     fprintf(fid,'(Y_%d %f)\n',j-1,y_(j));
                 end
                 fprintf(fid,')');
+                fclose(fid)
                 % We found a counterexample; we dont have to check the other
                 % input sets.
                 break;
@@ -68,6 +70,7 @@ function res = run_instance(benchName,modelPath,vnnlibPath,resultsPath, ...
                 % We cannot verify an input set; we dont have to check the other
                 % input sets.
                 fprintf(fid,'unknown\n');
+                fclose(fid)
                 break;
             end
         end
