@@ -1,19 +1,27 @@
 function res = prepare_instance(benchName,modelPath,vnnlibPath)
-
+  fprintf('prepare_instance(%s,%s,%s)...\n',benchName,modelPath,vnnlibPath);
   try
+      fprintf('--- Loading network...');
       % Load neural network.
       [nn,options,permuteInputDims] = aux_readNetworkAndOptions( ...
           benchName,modelPath,vnnlibPath,false);
+      fprintf(' done\n');
+
+      fprintf('--- GPU available: %d\n',options.nn.train.use_gpu);
    
+      fprintf('--- Loading specification...');
       % Load specification.
       [X0,specs] = vnnlib2cora(vnnlibPath);
+      fprintf(' done\n');
 
+      fprintf('--- Storing MATLAB file...');
       % Create filename.
       instanceFilename = getInstanceFilename(benchName,modelPath,vnnlibPath);
-
       % Store network, options, and specification.
       save(instanceFilename,'nn','options','permuteInputDims','X0','specs');
-  catch
+      fprintf(' done\n');
+  catch e
+      fprintf(e.message);
       % Some error
       res = 1;
       return;

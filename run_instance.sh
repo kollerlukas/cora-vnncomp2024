@@ -25,6 +25,6 @@ VNNLIB_FILE=$4
 RESULTS_FILE=$5
 TIMEOUT=$6
 
-echo "Running $TOOL_NAME on benchmark instance '$BENCHMARK' with onnx file '$ONNX_FILE', vnnlib file '$VNNLIB_FILE', results file $RESULTS_FILE, and timeout $TIMEOUT"
+echo "Running $TOOL_NAME on benchmark instance $BENCHMARK with onnx file $ONNX_FILE, vnnlib file $VNNLIB_FILE, results file $RESULTS_FILE, and timeout $TIMEOUT"
 
 matlab -nodisplay -r "run_instance('$BENCHMARK','$ONNX_FILE','$VNNLIB_FILE','$RESULTS_FILE',$TIMEOUT,true); quit;"

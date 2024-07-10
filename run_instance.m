@@ -1,16 +1,23 @@
 function res = run_instance(benchName,modelPath,vnnlibPath,resultsPath, ...
     timeout,verbose)
-
+    fprintf('run_instance(%s,%s,%s,%s,%d,%d)...\n',benchName,modelPath, ...
+        vnnlibPath,resultsPath,timeout,verbose);
     try
+        fprintf('--- Loading MATLAB file...');
         % Create filename.
         instanceFilename = ...
             getInstanceFilename(benchName,modelPath,vnnlibPath);
         % Load stored network and specification.
         load(instanceFilename,'nn','options','permuteInputDims', ...
             'X0','specs');
+        fprintf(' done\n');
+        
+        fprintf('--- Deleting MATLAB file...');
         % Delete file with stored networks and specification.
         delete(instanceFilename);
+        fprintf(' done\n');
 
+        fprintf('--- Running verification...');
         % Verify each input set individually.
         for j=1:length(X0)
     
@@ -39,10 +46,15 @@ function res = run_instance(benchName,modelPath,vnnlibPath,resultsPath, ...
         
             % Do verification.
             [res,x_,y_] = nn.verify(x,r,A,b,safeSet,options,timeout,true);
+            fprintf(' done\n');
 
+            fprintf('Writing results...\n');
+            fprintf('--- opening results file ...');
             % Open results file.
             fid = fopen(resultsPath,'w');
+            fprintf(' done\n');
 
+            fprintf('--- writing file ...');
             % Write results.
             if strcmp(res,'VERIFIED')
                 res = 'unsat';
@@ -76,10 +88,13 @@ function res = run_instance(benchName,modelPath,vnnlibPath,resultsPath, ...
                 break;
             end
         end
+        fprintf(' done\n');
 
-    catch
+    catch e
+        fprintf(e.message);
         % There is some issue with the parsing; e.g. acasxu prop_6.vnnlib
         res = 'unknown';
+        fprintf(' done\n');
     end
 
     if verbose
