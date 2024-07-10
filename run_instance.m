@@ -109,13 +109,13 @@ function [nn,options,permuteInputDims] = aux_readNetworkAndOptions( ...
     options = nnHelper.validateNNoptions(options,true);
     options.nn.interval_center = false;
 
-    if strcmp(benchName,'2024_test')
+    if strcmp(benchName,'test')
         nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'','', ...
             'dlnetwork',false);
         % Set the batch size.
         options.nn.train.mini_batch_size = 512;
         permuteInputDims = false;
-    elseif strcmp(benchName,'2024_acasxu_2023')
+    elseif strcmp(benchName,'acasxu_2023')
         % acasxu ----------------------------------------------------------
         nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'BSSC');
         % Set the batch size.
@@ -129,17 +129,17 @@ function [nn,options,permuteInputDims] = aux_readNetworkAndOptions( ...
                 "supported!",vnnlibPath,benchName)));
         end
         % --- Comment: batchSize 512 (on my laptop). 
-    elseif strcmp(benchName,'2024_cctsdb_yolo_2023')
+    elseif strcmp(benchName,'cctsdb_yolo_2023')
         throw(CORAerror('CORA:notSupported',...
             sprintf("Benchmark '%s' not supported!",benchName)));
-    elseif strcmp(benchName,'2024_cgan_2023')
+    elseif strcmp(benchName,'cgan_2023')
         % c_gan -----------------------------------------------------------
         % benchName = 'c_gan';
         % nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'BC');
         % --- TODO: implement convTranspose
         throw(CORAerror('CORA:notSupported',...
             sprintf("Benchmark '%s' not supported!",benchName)));
-    elseif strcmp(benchName,'2024_cifar100')
+    elseif strcmp(benchName,'cifar100')
         % vnncomp2024_cifar100_benchmark ----------------------------------
         nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'BCSS');
         % Bring input into the correct shape.
@@ -148,10 +148,10 @@ function [nn,options,permuteInputDims] = aux_readNetworkAndOptions( ...
         options.nn.train.mini_batch_size = 8;
         options.nn.interval_center = true;
         % --- Comment: point-eval possible; memory issues with zonotope eval.
-    elseif strcmp(benchName,'2024_collins_aerospace_benchmark')
+    elseif strcmp(benchName,'collins_aerospace_benchmark')
         throw(CORAerror('CORA:notSupported',...
             sprintf("Benchmark '%s' not supported!",benchName)));
-    elseif strcmp(benchName,'2024_collins_rul_cnn_2023')
+    elseif strcmp(benchName,'collins_rul_cnn_2023')
         % collins_rul_cnn -------------------------------------------------
         nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'BCSS');
         % Set the batch size.
@@ -159,27 +159,27 @@ function [nn,options,permuteInputDims] = aux_readNetworkAndOptions( ...
         options.nn.interval_center = true;
         permuteInputDims = true;
         % --- Comment: batchSize 128 (on my laptop).
-    elseif strcmp(benchName,'2024_collins_yolo_robustness_2023')
+    elseif strcmp(benchName,'collins_yolo_robustness_2023')
         throw(CORAerror('CORA:notSupported',...
             sprintf("Benchmark '%s' not supported!",benchName)));
-    elseif strcmp(benchName,'2024_dist_shift_2023')
+    elseif strcmp(benchName,'dist_shift_2023')
         % dist_shift ------------------------------------------------------
         nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'BC');
         % Set the batch size.
         options.nn.train.mini_batch_size = 256;
         permuteInputDims = false;
         % --- Comment: batchSize 256 (on my laptop). 
-    elseif strcmp(benchName,'2024_linearizenn')
+    elseif strcmp(benchName,'linearizenn')
         % LinearizeNN -----------------------------------------------------
         % benchName = 'LinearizeNN';
         % nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'BC');
         % --- TODO: weird networks (MatMul) and concat => No
         throw(CORAerror('CORA:notSupported',...
             sprintf("Benchmark '%s' not supported!",benchName)));
-    elseif strcmp(benchName,'2024_lsnc')
+    elseif strcmp(benchName,'lsnc')
         throw(CORAerror('CORA:notSupported',...
             sprintf("Benchmark '%s' not supported!",benchName)));
-    elseif strcmp(benchName,'2024_metaroom_2023')
+    elseif strcmp(benchName,'metaroom_2023')
         % metaroom --------------------------------------------------------
         nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'BCSS');
         % Set the batch size.
@@ -187,13 +187,13 @@ function [nn,options,permuteInputDims] = aux_readNetworkAndOptions( ...
         % Bring input into the correct shape.
         permuteInputDims = true;
         % --- Comment: 
-    elseif strcmp(benchName,'2024_ml4acopf_2023')
+    elseif strcmp(benchName,'ml4acopf_2023')
         throw(CORAerror('CORA:notSupported',...
             sprintf("Benchmark '%s' not supported!",benchName)));
-    elseif strcmp(benchName,'2024_ml4acopf_2024')
+    elseif strcmp(benchName,'ml4acopf_2024')
         throw(CORAerror('CORA:notSupported',...
             sprintf("Benchmark '%s' not supported!",benchName)));
-    elseif strcmp(benchName,'2024_nn4sys_2023')
+    elseif strcmp(benchName,'nn4sys_2023')
         % nn4sys ----------------------------------------------------------
         if ~strcmp(modelPath,'onnx/lindex.onnx') && ...
                 ~strcmp(modelPath,'onnx/lindex_deep.onnx')
@@ -207,30 +207,30 @@ function [nn,options,permuteInputDims] = aux_readNetworkAndOptions( ...
         options.nn.train.mini_batch_size = 128;
         permuteInputDims = false;
         % --- Comment: batchSize 128 (on my laptop); weird architectures
-    elseif strcmp(benchName,'2024_safenlp')
+    elseif strcmp(benchName,'safenlp')
         % safeNLP ---------------------------------------------------------
         % benchName = 'safeNLP';
         % nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'BC');
         % --- Comment: missing instances
         throw(CORAerror('CORA:notSupported',...
             sprintf("Benchmark '%s' not supported!",benchName)));
-    elseif strcmp(benchName,'2024_tinyimagenet')
+    elseif strcmp(benchName,'tinyimagenet')
         throw(CORAerror('CORA:notSupported',...
             sprintf("Benchmark '%s' not supported!",benchName)));
-    elseif strcmp(benchName,'2024_tllverifybench_2023')
+    elseif strcmp(benchName,'tllverifybench_2023')
         % tllverifybench --------------------------------------------------
         nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'BC');
         % --- Comment: out of memory error; adaptively set batch size?
-    elseif strcmp(benchName,'2024_traffic_signs_recognition_2023')
+    elseif strcmp(benchName,'traffic_signs_recognition_2023')
         throw(CORAerror('CORA:notSupported',...
             sprintf("Benchmark '%s' not supported!",benchName)));
-    elseif strcmp(benchName,'2024_vggnet16_2023')
+    elseif strcmp(benchName,'vggnet16_2023')
         throw(CORAerror('CORA:notSupported',...
             sprintf("Benchmark '%s' not supported!",benchName)));
-    elseif strcmp(benchName,'2024_vit_2023')
+    elseif strcmp(benchName,'vit_2023')
         throw(CORAerror('CORA:notSupported',...
             sprintf("Benchmark '%s' not supported!",benchName)));
-    elseif strcmp(benchName,'2024_yolo_2023')
+    elseif strcmp(benchName,'yolo_2023')
         throw(CORAerror('CORA:notSupported',...
             sprintf("Benchmark '%s' not supported!",benchName)));
     else
