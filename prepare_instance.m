@@ -21,7 +21,10 @@ function res = prepare_instance(benchName,modelPath,vnnlibPath)
       save(instanceFilename,'nn','options','permuteInputDims','X0','specs');
       fprintf(' done\n');
   catch e
+      % Print the error message. 
+      fprintf(newline);
       fprintf(e.message);
+      fprintf(newline);
       % Some error
       res = 1;
       return;
@@ -47,7 +50,11 @@ function [nn,options,permuteInputDims] = aux_readNetworkAndOptions( ...
   options = nnHelper.validateNNoptions(options,true);
   options.nn.interval_center = false;
 
-  if strcmp(benchName,'test')
+  % Obtain the model name.
+  modelName = regexp(modelPath,'([^/]+)(?=\.onnx$)','match');
+
+  if strcmp(benchName,'test') ...
+    || strcmp(modelName,'test_nano') % is called after each benchmark
       nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'','', ...
           'dlnetwork',false);
       % Set the batch size.
