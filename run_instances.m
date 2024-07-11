@@ -20,7 +20,7 @@ verifTimes = {};
 resultsPath = 'cora-results/';
 mkdir(resultsPath);
 
-for i=109:size(instances,1)
+for i=121:size(instances,1)
     % Extract current instance.
     instance = instances(i,:);
     modelPath = instance.model{1};
@@ -32,9 +32,6 @@ for i=109:size(instances,1)
     vnnlibName = regexp(vnnlibPath,'([^/]+)(?=\.vnnlib$)','match');
     instanceFilename = [resultsPath modelName{1} '_' ...
         vnnlibName{1} '.counterexample'];
-
-    % modelPath = ['onnx/' modelPath];
-    % vnnlibPath = ['generated_vnnlib/' vnnlibPath];
 
     % Prepare the current instance.
     prepare_instance(benchName,modelPath,vnnlibPath);

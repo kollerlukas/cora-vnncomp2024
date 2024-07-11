@@ -280,8 +280,9 @@ function [layers,inputSize,currentSize] = aux_convertLayer(layers,dlt_layer,curr
             layers{end+1} = nnReLULayer(dlt_layer.Name);
             layers{end+1} = nnLinearLayer(params.Learnables.W2',3.5,dlt_layer.Name);
         end
-    elseif strcmp(dlt_layer.Name, 'MatMul_To_AddLayer1019')
-        % for VNN Comp (cora)
+    elseif strcmp(dlt_layer.Name, 'MatMul_To_AddLayer1019') || ...
+            strcmp(dlt_layer.Name, 'Mul_To_AddLayer1021')
+        % for VNN Comp (cora - mnist, svhn, cifar10)
         params = dlt_layer.ONNXParams;
         layers{end+1} = nnLinearLayer(params.Learnables.fc_1_copy_MatMul_W, ...
             params.Nonlearnables.fc_1_copy_Add_B,dlt_layer.Name);

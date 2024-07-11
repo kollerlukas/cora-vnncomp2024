@@ -44,8 +44,26 @@ function res = run_instance(benchName,modelPath,vnnlibPath,resultsPath, ...
             % Measure verification time.
             tic
         
-            % Do verification.
-            [res,x_,y_] = nn.verify(x,r,A,b,safeSet,options,timeout,true);
+            while true
+                try
+                    % Do verification.
+                    [res,x_,y_] = nn.verify(x,r,A,b,safeSet,options,timeout,true);
+                    break;
+                catch me
+                    if ismember(me.identifier, ...
+                            {'parallel:gpu:array:pmaxsize', ...
+                                'parallel:gpu:array:OOM', ...
+                                'MATLAB:array:SizeLimitExceeded'}) ...
+                            && options.nn.train.mini_batch_size > 1
+                        options.nn.train.mini_batch_size = ...
+                            floor(1/2*options.nn.train.mini_batch_size);
+                        fprintf('--- OOM error: half batchSize %d...\n', ...
+                            options.nn.train.mini_batch_size);
+                    else
+                        break;
+                    end
+                end
+            end
             fprintf(' done\n');
 
             fprintf('Writing results...\n');
@@ -59,7 +77,7 @@ function res = run_instance(benchName,modelPath,vnnlibPath,resultsPath, ...
             if strcmp(res,'VERIFIED')
                 res = 'unsat';
                 % Write content.
-                fprintf(fid,'unsat\n');
+                fprintf(fid,['unsat' newline]);
                 fclose(fid);
             elseif strcmp(res,'COUNTER EXAMPLE')
                 res = 'sat';
@@ -69,14 +87,14 @@ function res = run_instance(benchName,modelPath,vnnlibPath,resultsPath, ...
                   x_ = reshape(permute(reshape(x_,inSize),[2 1 3]),[],1);
                 end
                 % Write content.
-                fprintf(fid,'sat\n(');
+                fprintf(fid,['sat' newline '(']);
                 % Write input values.
                 for j=1:size(x_,1)
-                    fprintf(fid,'(X_%d %f)\n',j-1,x_(j));
+                    fprintf(fid,['(X_%d %f)' newline],j-1,x_(j));
                 end
                 % Write output values.
                 for j=1:size(y_,1)
-                    fprintf(fid,'(Y_%d %f)\n',j-1,y_(j));
+                    fprintf(fid,['(Y_%d %f)' newline],j-1,y_(j));
                 end
                 fprintf(fid,')');
                 fclose(fid);
@@ -87,7 +105,7 @@ function res = run_instance(benchName,modelPath,vnnlibPath,resultsPath, ...
                 res = 'unknown';
                 % We cannot verify an input set; we dont have to check the other
                 % input sets.
-                fprintf(fid,'unknown\n');
+                fprintf(fid,['unknown' newline]);
                 fclose(fid);
                 break;
             end

@@ -40,7 +40,7 @@ function [nn,options,permuteInputDims] = aux_readNetworkAndOptions( ...
       'poly_method','bounds',...'bounds','singh'
       'train',struct(...
           'backprop',false,...
-          'mini_batch_size',128 ...
+          'mini_batch_size',512 ...
       ) ...
   );
   % Set default training parameters
@@ -51,13 +51,13 @@ function [nn,options,permuteInputDims] = aux_readNetworkAndOptions( ...
       nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'','', ...
           'dlnetwork',false);
       % Set the batch size.
-      options.nn.train.mini_batch_size = 512;
+      % options.nn.train.mini_batch_size = 512;
       permuteInputDims = false;
   elseif strcmp(benchName,'acasxu_2023')
       % acasxu ----------------------------------------------------------
       nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'BSSC');
       % Set the batch size.
-      options.nn.train.mini_batch_size = 512;
+      % options.nn.train.mini_batch_size = 512;
       permuteInputDims = false;
       if strcmp(vnnlibPath,'vnnlib/prop_7.vnnlib') || ...
               strcmp(vnnlibPath,'vnnlib/prop_8.vnnlib')
@@ -84,7 +84,7 @@ function [nn,options,permuteInputDims] = aux_readNetworkAndOptions( ...
       % Bring input into the correct shape.
       permuteInputDims = true;
       % Set the batch size and use interval-center.
-      options.nn.train.mini_batch_size = 32;
+      % options.nn.train.mini_batch_size = 32;
       options.nn.interval_center = true;
       % --- Comment: point-eval possible; memory issues with zonotope eval.
   elseif strcmp(benchName,'collins_aerospace_benchmark')
@@ -94,7 +94,7 @@ function [nn,options,permuteInputDims] = aux_readNetworkAndOptions( ...
       % collins_rul_cnn -------------------------------------------------
       nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'BCSS');
       % Set the batch size.
-      options.nn.train.mini_batch_size = 128;
+      % options.nn.train.mini_batch_size = 128;
       options.nn.interval_center = true;
       permuteInputDims = true;
       % --- Comment: batchSize 128 (on my laptop).
@@ -105,13 +105,13 @@ function [nn,options,permuteInputDims] = aux_readNetworkAndOptions( ...
       nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'','', ...
           'dlnetwork',false);
       % Set the batch size.
-      options.nn.train.mini_batch_size = 512;
+      % options.nn.train.mini_batch_size = 128;
       permuteInputDims = false;
   elseif strcmp(benchName,'dist_shift_2023')
       % dist_shift ------------------------------------------------------
       nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'BC');
       % Set the batch size.
-      options.nn.train.mini_batch_size = 256;
+      % options.nn.train.mini_batch_size = 256;
       permuteInputDims = false;
       % --- Comment: batchSize 256 (on my laptop). 
   elseif strcmp(benchName,'linearizenn')
@@ -128,7 +128,7 @@ function [nn,options,permuteInputDims] = aux_readNetworkAndOptions( ...
       % metaroom --------------------------------------------------------
       nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'BCSS');
       % Set the batch size.
-      options.nn.train.mini_batch_size = 1;
+      % options.nn.train.mini_batch_size = 1;
       % Bring input into the correct shape.
       permuteInputDims = true;
       % --- Comment: 
@@ -149,14 +149,14 @@ function [nn,options,permuteInputDims] = aux_readNetworkAndOptions( ...
       end
       nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'BC');
       % Set the batch size.
-      options.nn.train.mini_batch_size = 128;
+      % options.nn.train.mini_batch_size = 128;
       permuteInputDims = false;
       % --- Comment: batchSize 128 (on my laptop); weird architectures
   elseif strcmp(benchName,'safenlp')
       % safeNLP ---------------------------------------------------------
       nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'BC');
       % Set the batch size.
-      options.nn.train.mini_batch_size = 128;
+      % options.nn.train.mini_batch_size = 128;
       permuteInputDims = false;
   elseif strcmp(benchName,'tinyimagenet')
       % vnncomp2024_cifar100_benchmark ----------------------------------
@@ -165,14 +165,14 @@ function [nn,options,permuteInputDims] = aux_readNetworkAndOptions( ...
       % Bring input into the correct shape.
       permuteInputDims = true;
       % Set the batch size and use interval-center.
-      options.nn.train.mini_batch_size = 32;
+      % options.nn.train.mini_batch_size = 32;
       options.nn.interval_center = true;
       % --- Comment: point-eval possible; memory issues with zonotope eval.
   elseif strcmp(benchName,'tllverifybench_2023')
       % tllverifybench --------------------------------------------------
       nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'BC');
       % Set the batch size and use interval-center.
-      options.nn.train.mini_batch_size = 128;
+      % options.nn.train.mini_batch_size = 128;
       permuteInputDims = false;
   elseif strcmp(benchName,'traffic_signs_recognition_2023')
       throw(CORAerror('CORA:notSupported',...
@@ -190,24 +190,5 @@ function [nn,options,permuteInputDims] = aux_readNetworkAndOptions( ...
       throw(CORAerror('CORA:notSupported',...
           sprintf("Unknown benchmark '%s'!",benchName)));
   end
-  
-      % cora ------------------------------------------------------------
-      % benchName = 'cora';
-      % nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'BC');
-      % % Set the batch size.
-      % options.nn.train.mini_batch_size = 128;
-      % --- Comment: batchSize 128 (on my laptop).
-  
-      % vnncomp2024_tinyimagenet_benchmark ------------------------------
-      % benchName = 'vnncomp2024_tinyimagenet_benchmark';
-      % modelPath = ['onnx/' modelPath];
-      % vnnlibPath = ['generated_vnnlib/' vnnlibPath];
-      % nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'BCSS');
-      % % Bring input into the correct shape.
-      % permuteInputDims = true;
-      % % Set the batch size and use interval-center.
-      % options.nn.train.mini_batch_size = 8;
-      % options.nn.interval_center = true;
-      % --- Comment: point-eval possible; memory issues with zonotope eval.
 
 end

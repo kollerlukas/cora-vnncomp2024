@@ -93,7 +93,9 @@ for i = 1:length(data.polyOutput)
 end
 
 % construct specification from list of output polytopes
-if length(Y) == 1
+if isempty(Y)
+    throw(CORAerror("CORA:converterIssue",sprintf('Unable to convert file: %s', file)));
+elseif isscalar(Y)
     spec = specification(Y{1}, 'safeSet');
 else
     % convert to the union of unsafe sets
