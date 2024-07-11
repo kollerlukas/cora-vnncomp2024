@@ -259,27 +259,53 @@ function [layers,inputSize,currentSize] = aux_convertLayer(layers,dlt_layer,curr
         layers{end+1} = nnReshapeLayer(idx_out, dlt_layer.Name);
 
     elseif strcmp(dlt_layer.Name, 'MatMul_To_ReluLayer1003')
-        % for VNN Comp (test_nano.onnx)
+        % for VNN Comp (test -- test_nano.onnx)
         params = dlt_layer.ONNXParams;
         layers{end+1} = nnLinearLayer(params.Learnables.Ma_MatMulcst,0, ...
             dlt_layer.Name);
         layers{end+1} = nnReLULayer(dlt_layer.Name);
     elseif strcmp(dlt_layer.Name, 'MatMul_To_AddLayer1003')
-        % for VNN Comp
+        % for VNN Comp (test)
         params = dlt_layer.ONNXParams;
         if ~isfield(params.Learnables,'W2')
-            % (test_tiny.onnx)
+            % (test --- test_tiny.onnx)
             layers{end+1} = nnLinearLayer(params.Learnables.W0,0,dlt_layer.Name);
             layers{end+1} = nnReLULayer(dlt_layer.Name);
             layers{end+1} = nnLinearLayer(params.Learnables.W1,0,dlt_layer.Name);
         else
-            % (test_small.onnx)
+            % (test --- test_small.onnx)
             layers{end+1} = nnLinearLayer(params.Learnables.W0',[1.5; 1.5],dlt_layer.Name);
             layers{end+1} = nnReLULayer(dlt_layer.Name);
             layers{end+1} = nnLinearLayer(params.Learnables.W1,[2.5; 2.5],dlt_layer.Name);
             layers{end+1} = nnReLULayer(dlt_layer.Name);
             layers{end+1} = nnLinearLayer(params.Learnables.W2',3.5,dlt_layer.Name);
         end
+    elseif strcmp(dlt_layer.Name, 'MatMul_To_AddLayer1019')
+        % for VNN Comp (cora)
+        params = dlt_layer.ONNXParams;
+        layers{end+1} = nnLinearLayer(params.Learnables.fc_1_copy_MatMul_W, ...
+            params.Nonlearnables.fc_1_copy_Add_B,dlt_layer.Name);
+        layers{end+1} = nnReLULayer(dlt_layer.Name);
+        layers{end+1} = nnLinearLayer(params.Learnables.fc_2_copy_MatMul_W, ...
+            params.Nonlearnables.fc_2_copy_Add_B,dlt_layer.Name);
+        layers{end+1} = nnReLULayer(dlt_layer.Name);
+        layers{end+1} = nnLinearLayer(params.Learnables.fc_3_copy_MatMul_W, ...
+            params.Nonlearnables.fc_3_copy_Add_B,dlt_layer.Name);
+        layers{end+1} = nnReLULayer(dlt_layer.Name);
+        layers{end+1} = nnLinearLayer(params.Learnables.fc_4_copy_MatMul_W, ...
+            params.Nonlearnables.fc_4_copy_Add_B,dlt_layer.Name);
+        layers{end+1} = nnReLULayer(dlt_layer.Name);
+        layers{end+1} = nnLinearLayer(params.Learnables.fc_5_copy_MatMul_W, ...
+            params.Nonlearnables.fc_5_copy_Add_B,dlt_layer.Name);
+        layers{end+1} = nnReLULayer(dlt_layer.Name);
+        layers{end+1} = nnLinearLayer(params.Learnables.fc_6_copy_MatMul_W, ...
+            params.Nonlearnables.fc_6_copy_Add_B,dlt_layer.Name);
+        layers{end+1} = nnReLULayer(dlt_layer.Name);
+        layers{end+1} = nnLinearLayer(params.Learnables.fc_7_copy_MatMul_W, ...
+            params.Nonlearnables.fc_7_copy_Add_B,dlt_layer.Name);
+        layers{end+1} = nnReLULayer(dlt_layer.Name);
+        layers{end+1} = nnLinearLayer(params.Learnables.fc_8_copy_MatMul_W, ...
+            params.Nonlearnables.fc_8_copy_Add_B,dlt_layer.Name);
     elseif strcmp(dlt_layer.Name, 'Sub_To_AddLayer1018')
         % for VNN Comp (test_sat.onnx)
         params = dlt_layer.ONNXParams;

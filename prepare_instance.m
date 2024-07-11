@@ -79,7 +79,8 @@ function [nn,options,permuteInputDims] = aux_readNetworkAndOptions( ...
           sprintf("Benchmark '%s' not supported!",benchName)));
   elseif strcmp(benchName,'cifar100')
       % vnncomp2024_cifar100_benchmark ----------------------------------
-      nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'BCSS');
+      nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'BCSS', ...
+          '','dagnetwork',true);
       % Bring input into the correct shape.
       permuteInputDims = true;
       % Set the batch size and use interval-center.
@@ -100,6 +101,12 @@ function [nn,options,permuteInputDims] = aux_readNetworkAndOptions( ...
   elseif strcmp(benchName,'collins_yolo_robustness_2023')
       throw(CORAerror('CORA:notSupported',...
           sprintf("Benchmark '%s' not supported!",benchName)));
+  elseif strcmp(benchName,'cora')
+      nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'','', ...
+          'dlnetwork',false);
+      % Set the batch size.
+      options.nn.train.mini_batch_size = 512;
+      permuteInputDims = false;
   elseif strcmp(benchName,'dist_shift_2023')
       % dist_shift ------------------------------------------------------
       nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'BC');
@@ -147,14 +154,14 @@ function [nn,options,permuteInputDims] = aux_readNetworkAndOptions( ...
       % --- Comment: batchSize 128 (on my laptop); weird architectures
   elseif strcmp(benchName,'safenlp')
       % safeNLP ---------------------------------------------------------
-      % benchName = 'safeNLP';
-      % nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'BC');
-      % --- Comment: missing instances
-      throw(CORAerror('CORA:notSupported',...
-          sprintf("Benchmark '%s' not supported!",benchName)));
+      nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'BC');
+      % Set the batch size.
+      options.nn.train.mini_batch_size = 128;
+      permuteInputDims = false;
   elseif strcmp(benchName,'tinyimagenet')
       % vnncomp2024_cifar100_benchmark ----------------------------------
-      nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'BCSS');
+      nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'BCSS', ...
+          '','dagnetwork',true);
       % Bring input into the correct shape.
       permuteInputDims = true;
       % Set the batch size and use interval-center.
@@ -165,8 +172,8 @@ function [nn,options,permuteInputDims] = aux_readNetworkAndOptions( ...
       % tllverifybench --------------------------------------------------
       nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'BC');
       % Set the batch size and use interval-center.
-      options.nn.train.mini_batch_size = 32;
-      options.nn.interval_center = true;
+      options.nn.train.mini_batch_size = 128;
+      permuteInputDims = false;
   elseif strcmp(benchName,'traffic_signs_recognition_2023')
       throw(CORAerror('CORA:notSupported',...
           sprintf("Benchmark '%s' not supported!",benchName)));

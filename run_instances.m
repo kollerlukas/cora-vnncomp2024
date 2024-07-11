@@ -1,5 +1,6 @@
 % Specify benchmark name.
-benchName = 'acasxu_2023';
+dirs = regexp(pwd,'([^/]+)','match');
+benchName = dirs{end};
 % Obtain all instances.
 filename = 'instances.csv';
 instances = readtable(filename,'Delimiter',',');
@@ -19,7 +20,7 @@ verifTimes = {};
 resultsPath = 'cora-results/';
 mkdir(resultsPath);
 
-for i=1:size(instances,1)
+for i=109:size(instances,1)
     % Extract current instance.
     instance = instances(i,:);
     modelPath = instance.model{1};
