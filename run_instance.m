@@ -123,6 +123,11 @@ function res = run_instance(benchName,modelPath,vnnlibPath,resultsPath, ...
         % There is some issue with the parsing; e.g. acasxu prop_6.vnnlib
         res = 'unknown';
         fprintf(' done\n');
+
+        % Open results file.
+        fid = fopen(resultsPath,'w');
+        fprintf(fid,['unknown' newline]);
+        fclose(fid);
     end
 
     if verbose
