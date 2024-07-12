@@ -20,7 +20,7 @@ verifTimes = {};
 resultsPath = 'cora-results/';
 mkdir(resultsPath);
 
-for i=121:size(instances,1)
+for i=1:size(instances,1)
     % Extract current instance.
     instance = instances(i,:);
     modelPath = instance.model{1};
