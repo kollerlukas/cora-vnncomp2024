@@ -301,9 +301,13 @@ function msg = aux_getName(structName, field)
 end
 
 function gpu_available = aux_isGPUavailable()
-    if ~isempty(which('gpuDeviceCount'))
-        gpu_available = gpuDeviceCount('available') > 0;
-    else
+    try
+      if ~isempty(which('gpuDeviceCount'))
+          gpu_available = gpuDeviceCount('available') > 0;
+      else
+          gpu_available = false;
+      end
+    catch
         gpu_available = false;
     end
 end
