@@ -5,7 +5,7 @@ function res = run_instance(benchName,modelPath,vnnlibPath,resultsPath, ...
     try
         fprintf('--- Loading MATLAB file...');
         % Create filename.
-        instanceFilename = ...
+        [instanceFilename,modelName,~] = ...
             getInstanceFilename(benchName,modelPath,vnnlibPath);
         % Load stored network and specification.
         load(instanceFilename,'nn','options','permuteInputDims', ...
@@ -17,12 +17,14 @@ function res = run_instance(benchName,modelPath,vnnlibPath,resultsPath, ...
         delete(instanceFilename);
         fprintf(' done\n');
 
+        % Obtain the model name.
         if permuteInputDims
-            if strcmp(benchName,'collins_rul_cnn_2023')
-                inSize = nn.layers{1}.inputSize;
-            else
-                inSize = nn.layers{1}.inputSize([2 1 3]);
-            end
+            % if strcmp(benchName,'collins_rul_cnn_2023') && ~strcmp(modelName,'NN_rul_full_window_40')
+            %     inSize = nn.layers{1}.inputSize;
+            % else
+            %     inSize = nn.layers{1}.inputSize([2 1 3]);
+            % end
+            inSize = nn.layers{1}.inputSize([2 1 3]);
         end
 
         fprintf('--- Running verification...');
@@ -96,7 +98,7 @@ function res = run_instance(benchName,modelPath,vnnlibPath,resultsPath, ...
                 res = 'sat';
                 % Reorder input dimensions...
                 if permuteInputDims
-                  x_ = reshape(permute(reshape(x_,inSize),[2 1 3]),[],1);
+                  x_ = reshape(permute(reshape(x_,inSize([2 1 3])),[2 1 3]),[],1);
                 end
                 % Write content.
                 fprintf(fid,['sat' newline '(']);

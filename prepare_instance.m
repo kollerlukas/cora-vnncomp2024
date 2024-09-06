@@ -51,7 +51,7 @@ function [nn,options,permuteInputDims] = aux_readNetworkAndOptions( ...
   options.nn.interval_center = false;
 
   % Obtain the model name.
-  modelName = regexp(modelPath,'([^/]+)(?=\.onnx$)','match');
+  [~,modelName,~] = getInstanceFilename(benchName,modelPath,vnnlibPath);
 
   if strcmp(benchName,'test') ...
     || strcmp(modelName{1},'test_nano') % is called after each benchmark

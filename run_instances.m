@@ -17,7 +17,7 @@ results = {};
 verifTimes = {};
 
 % Create results folder.
-resultsPath = 'cora-results/';
+resultsPath = ['/results/' benchName]; % 'cora-results/'; % 
 mkdir(resultsPath);
 
 for i=1:size(instances,1)
@@ -30,8 +30,8 @@ for i=1:size(instances,1)
     % Create instance filename.
     modelName = regexp(modelPath,'([^/]+)(?=\.onnx$)','match');
     vnnlibName = regexp(vnnlibPath,'([^/]+)(?=\.vnnlib$)','match');
-    instanceFilename = [resultsPath modelName{1} '_' ...
-        vnnlibName{1} '.counterexample'];
+    instanceFilename = sprintf('%s/%s_%s.counterexample',...
+        resultsPath,modelName{1},vnnlibName{1});
 
     % Prepare the current instance.
     prepare_instance(benchName,modelPath,vnnlibPath);
