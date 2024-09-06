@@ -100,17 +100,6 @@ while size(xs,2) > 0
             size(xs,2),verifiedPatches,totalNumSplits,mean(rs,'all'));
     end
 
-    % % Adapt batch size to available memory.
-    % info = whos('inputDataClass');
-    % if useGpu    
-    %     % Obtain available gpu memory.
-    %     g = gpuDevice;
-    %     avMem = g.AvailableMemory;
-    % else
-    %     avMem = inf;
-    % end
-    % bs = floor(min(bs, avMem/(info.bytes * numGen * n0 * 10)));
-
     % Pop next batch from the queue.
     [xi,ri,xs,rs] = aux_pop(xs,rs,bs);
     % Move the batch to the GPU.
@@ -131,15 +120,15 @@ while size(xs,2) > 0
     % 3. Check adversarial examples.
     yi = nn.evaluate_(zi,options,idxLayer);
     if safeSet
-        checkSpecs = any(A*yi + b > 0,1);
+        checkSpecs = any(A*yi + b >= 0,1);
     else
-        checkSpecs = all(A*yi + b < 0,1);
+        checkSpecs = all(A*yi + b <= 0,1);
     end
     if any(checkSpecs)
         % Found a counterexample.
         res = 'COUNTER EXAMPLE';
         idNzEntry = find(checkSpecs);
-        id = ceil(idNzEntry/size(A,1));
+        id = idNzEntry(1); % ceil(idNzEntry/size(A,1));
         x_ = zi(:,id);
         y_ = yi(:,id);
         break;

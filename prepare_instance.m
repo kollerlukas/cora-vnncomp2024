@@ -18,7 +18,7 @@ function res = prepare_instance(benchName,modelPath,vnnlibPath)
       % Create filename.
       instanceFilename = getInstanceFilename(benchName,modelPath,vnnlibPath);
       % Store network, options, and specification.
-      save(instanceFilename,'nn',options','permuteInputDims','X0','specs');
+      save(instanceFilename,'nn','options','permuteInputDims','X0','specs');
       fprintf(' done\n');
   catch e
       % Print the error message. 
