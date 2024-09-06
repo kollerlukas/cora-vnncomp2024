@@ -17,6 +17,14 @@ function res = run_instance(benchName,modelPath,vnnlibPath,resultsPath, ...
         delete(instanceFilename);
         fprintf(' done\n');
 
+        if permuteInputDims
+            if strcmp(benchName,'collins_rul_cnn_2023')
+                inSize = nn.layers{1}.inputSize;
+            else
+                inSize = nn.layers{1}.inputSize([2 1 3]);
+            end
+        end
+
         fprintf('--- Running verification...');
         % Verify each input set individually.
         for j=1:length(X0)
@@ -26,7 +34,6 @@ function res = run_instance(benchName,modelPath,vnnlibPath,resultsPath, ...
             r = 1/2*(X0{j}.sup - X0{j}.inf);
         
             if permuteInputDims
-                inSize = nn.layers{1}.inputSize([2 1 3]);
                 x = reshape(permute(reshape(x,inSize),[2 1 3]),[],1);
                 r = reshape(permute(reshape(r,inSize),[2 1 3]),[],1);
             end
@@ -47,7 +54,7 @@ function res = run_instance(benchName,modelPath,vnnlibPath,resultsPath, ...
             while true
                 try
                     % Do verification.
-                    [res,x_,y_] = nn.verify(x,r,A,b,safeSet,options,timeout,true);
+                    [res,x_,y_] = nn.verify(x,r,A,b,safeSet,options,timeout,verbose);
                     break;
                 catch e
                     if ismember(e.identifier, ...
@@ -89,7 +96,6 @@ function res = run_instance(benchName,modelPath,vnnlibPath,resultsPath, ...
                 res = 'sat';
                 % Reorder input dimensions...
                 if permuteInputDims
-                  inSize = nn.layers{1}.inputSize([2 1 3]);
                   x_ = reshape(permute(reshape(x_,inSize),[2 1 3]),[],1);
                 end
                 % Write content.

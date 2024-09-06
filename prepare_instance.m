@@ -18,7 +18,7 @@ function res = prepare_instance(benchName,modelPath,vnnlibPath)
       % Create filename.
       instanceFilename = getInstanceFilename(benchName,modelPath,vnnlibPath);
       % Store network, options, and specification.
-      save(instanceFilename,'nn','options','permuteInputDims','X0','specs');
+      save(instanceFilename,'nn',options','permuteInputDims','X0','specs');
       fprintf(' done\n');
   catch e
       % Print the error message. 
@@ -109,8 +109,7 @@ function [nn,options,permuteInputDims] = aux_readNetworkAndOptions( ...
       throw(CORAerror('CORA:notSupported',...
           sprintf("Benchmark '%s' not supported!",benchName)));
   elseif strcmp(benchName,'cora')
-      nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'','', ...
-          'dlnetwork',false);
+      nn = neuralNetwork.readONNXNetwork(modelPath,verbose,'BC');
       % Set the batch size.
       % options.nn.train.mini_batch_size = 128;
       permuteInputDims = false;

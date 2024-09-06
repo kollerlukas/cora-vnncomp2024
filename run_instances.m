@@ -7,7 +7,7 @@ instances = readtable(filename,'Delimiter',',');
 % Rename columns
 instances.Properties.VariableNames = {'model','vnnlib','timeout'};
 
-verbose = true;
+verbose = false;
 
 benchmarkNames = {};
 models = {};
@@ -51,8 +51,8 @@ for i=1:size(instances,1)
 
     % Store outputs.
     benchmarkNames = [benchmarkNames; benchName];
-    models = [models; modelPath];
-    vnnlibs = [vnnlibs; vnnlibPath];
+    models = [models; 'vnncomp2024_benchmarks/benchmarks/' modelPath];
+    vnnlibs = [vnnlibs; 'vnncomp2024_benchmarks/benchmarks/' vnnlibPath];
     prepTimes = [prepTimes; 0];
     results = [results; res];
     verifTimes = [verifTimes; instanceTime];
@@ -62,4 +62,5 @@ end
 resultsTable = table(benchmarkNames,models,vnnlibs,prepTimes,results, ...
     verifTimes);
 % Write to file.
-writetable(resultsTable,sprintf('%s/results.csv',resultsPath));
+writetable(resultsTable,sprintf('%s/results.csv',resultsPath),...
+    'WriteVariableNames',false);
