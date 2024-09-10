@@ -130,7 +130,10 @@ while size(xs,2) > 0
         idNzEntry = find(checkSpecs);
         id = idNzEntry(1); % ceil(idNzEntry/size(A,1));
         x_ = zi(:,id);
-        y_ = yi(:,id);
+        % Gathering weights from gpu. There is are precision error when 
+        % using single gpuArray.
+        nn.castWeights(single(1));
+        y_ = nn.evaluate_(gather(x_),options,idxLayer); % yi(:,id);
         break;
     end
 
