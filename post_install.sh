@@ -47,14 +47,17 @@ curl --retry 100 --retry-connrefused  -L ${LICENSE_URL} -o license.lic
 cp -f license.lic "${EXISTING_MATLAB_LOCATION}/licenses"
 # run installCORA non-interactively
 matlab -nodisplay -r "cd ${CURR_DIR}; addpath(genpath('.')); installCORA(false,true,'${CURR_DIR}/code'); savepath"
-# -------------------------------------------------------------------------
-# DONE
-echo post_install.sh done
+
 # -------------------------------------------------------------------------
 # APPEND SSH KEY
 # echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICNsvgOYRzzuh3BH6Hslv3g8Ro4bG5dZoQbN4QixS1fd lukas.koller@tum.de" >> ~/.ssh/authorized_keys
+
 # -------------------------------------------------------------------------
 # FIX GPU DRIVER ISSUES
 sudo add-apt-repository ppa:graphics-drivers/ppa --yes
 sudo apt update
 sudo apt --fix-broken install
+
+# -------------------------------------------------------------------------
+# DONE
+echo post_install.sh done
